@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Article: {{ post.title }} - BlogSphere{% endblock %}
+
+{% block content %}
+<div class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-1 small">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('blog_detail', slug=post.slug) }}">{{ post.title | truncate(25) }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Post</li>
+              </ol>
+            </nav>
+            <h1 class="h3 fw-bold text-dark mb-0">Edit Blog Post</h1>
+          </div>
+          <div class="d-flex gap-2">
+            <a href="{{ url_for('blog_detail', slug=post.slug) }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+              <i class="bi bi-eye me-1"></i> View Post
+            </a>
+            <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteConfirmModal"
+              data-item-type="Post"
+              data-item-name="{{ post.title }}"
+              data-action-url="{{ url_for('delete_blog', post_id=post.id) }}">
+              <i class="bi bi-trash3 me-1"></i> Delete
+            </button>
+          </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card card-custom p-4 p-md-5">
+          <form action="{{ url_for('edit_blog', post_id=post.id) }}" method="POST" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="row g-4">
+              <!-- Title -->
+              <div class="col-12">
+                <label for="{{ form.title.id }}" class="form-label">
+                  Blog Title <span class="text-danger">*</span>
+                </label>
+                {{ form.title(class="form-control form-control-lg") }}
+                {% if form.title.errors %}
+                  <div class="text-danger small mt-1">
+                    {% for error in form.title.errors %}{{ error }}{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Category -->
+              <div class="col-md-6">
+                <label for="{{ form.category_id.id }}" class="form-label">
+                  Category <span class="text-danger">*</span>
+                </label>
+                {{ form.category_id(class="form-select") }}
+                {% if form.category_id.errors %}
+                  <div class="text-danger small mt-1">
+                    {% for error in form.category_id.errors %}{{ error }}{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Tags -->
+              <div class="col-md-6">
+                <label for="{{ form.tags.id }}" class="form-label">
+                  Tags <span class="text-muted fw-normal">(Comma-separated)</span>
+                </label>
+                {{ form.tags(class="form-control") }}
+                {% if form.tags.errors %}
+                  <div class="text-danger small mt-1">
+                    {% for error in form.tags.errors %}{{ error }}{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Summary -->
+              <div class="col-12">
+                <label for="{{ form.summary.id }}" class="form-label">
+                  Short Summary / Abstract <span class="text-danger">*</span>
+                </label>
+                {{ form.summary(class="form-control", rows="3") }}
+                {% if form.summary.errors %}
+                  <div class="text-danger small mt-1">
+                    {% for error in form.summary.errors %}{{ error }}{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Cover Image & Replacement -->
+              <div class="col-12">
+                <label for="{{ form.featured_image.id }}" class="form-label">
+                  Featured Cover Image <span class="text-muted fw-normal">(Upload new to replace)</span>
+                </label>
+
+                {% if post.featured_image %}
+                  <div class="mb-3 d-flex align-items-center gap-3 p-3 bg-light rounded border">
+                    <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" alt="Current image" class="rounded border" style="width: 100px; height: 60px; object-fit: cover;">
+                    <div class="small">
+                      <div class="fw-semibold text-dark">Current Image: {{ post.featured_image }}</div>
+                      <div class="text-muted">Choose a new file below if you wish to change it.</div>
+                    </div>
+                  </div>
+                {% endif %}
+
+                {{ form.featured_image(class="form-control image-preview-input", **{'data-preview-target': 'featuredImagePreview'}) }}
+                {% if form.featured_image.errors %}
+                  <div class="text-danger small mt-1">
+                    {% for error in form.featured_image.errors %}{{ error }}{% endfor %}
+                  </div>
+                {% endif %}
+
+                <!-- Live Preview of new selection -->
+                <div id="featuredImagePreviewContainer" class="d-none mt-3">
+                  <div class="small fw-semibold text-muted mb-1">New Image Preview:</div>
+                  <img id="featuredImagePreview" src="#" alt="New preview" class="rounded border shadow-sm" style="max-height: 220px; width: auto; object-fit: cover;">
+                </div>
+              </div>
+
+              <!-- Content Body -->
+              <div class="col-12">
+                <label for="{{ form.content.id }}" class="form-label">
+                  Blog Content <span class="text-danger">*</span>
+                </label>
+                {{ form.content(class="form-control font-monospace", rows="15") }}
+                {% if form.content.errors %}
+                  <div class="text-danger small mt-1">
+                    {% for error in form.content.errors %}{{ error }}{% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Featured Flag (Only Admin) -->
+              {% if current_user.is_admin() %}
+                <div class="col-12">
+                  <div class="form-check form-switch p-3 bg-light rounded border">
+                    {{ form.is_featured(class="form-check-input", role="switch") }}
+                    <label class="form-check-label fw-semibold text-dark ms-2" for="{{ form.is_featured.id }}">
+                      <i class="bi bi-star-fill text-warning me-1"></i> Feature this post on the homepage
+                    </label>
+                  </div>
+                </div>
+              {% endif %}
+
+              <!-- Actions -->
+              <div class="col-12 pt-3 border-top d-flex justify-content-between align-items-center">
+                <a href="{{ url_for('blog_detail', slug=post.slug) }}" class="btn btn-light rounded-pill px-4">
+                  Cancel
+                </a>
+                <button type="submit" class="btn btn-primary btn-pill px-5">
+                  <i class="bi bi-check2-circle me-1"></i> Update Post
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

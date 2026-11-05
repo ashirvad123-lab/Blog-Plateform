@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{% block meta_description %}BlogSphere - Modern full-stack blogging platform. Share your ideas, inspire the world, and join thoughtful discussions.{% endblock %}">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block title %}BlogSphere - Share Your Ideas. Inspire the World.{% endblock %}</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5.3.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Bootstrap Icons 1.11.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-custom sticky-top shadow-sm">
+    <div class="container">
+      <!-- Brand Logo -->
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('index') }}">
+        <span class="navbar-brand-badge">
+          <i class="bi bi-journal-richtext"></i>
+        </span>
+        <span class="brand-text">BlogSphere</span>
+      </a>
+
+      <!-- Mobile Toggle -->
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Nav Links -->
+      <div class="collapse navbar-collapse" id="navbarMain">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+              <i class="bi bi-house-door me-1"></i> Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'blogs' %}active{% endif %}" href="{{ url_for('blogs') }}">
+              <i class="bi bi-grid me-1"></i> All Blogs
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'about' %}active{% endif %}" href="{{ url_for('about') }}">
+              <i class="bi bi-info-circle me-1"></i> About Us
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'contact' %}active{% endif %}" href="{{ url_for('contact') }}">
+              <i class="bi bi-envelope me-1"></i> Contact
+            </a>
+          </li>
+        </ul>
+
+        <!-- Right Side Nav -->
+        <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+          {% if current_user.is_authenticated %}
+            <!-- Write Post Button -->
+            <a href="{{ url_for('create_blog') }}" class="btn btn-primary btn-pill btn-sm d-flex align-items-center gap-1 px-3 py-2">
+              <i class="bi bi-pencil-square"></i>
+              <span>Write Post</span>
+            </a>
+
+            <!-- User Dropdown Menu -->
+            <div class="dropdown">
+              <button class="btn btn-light dropdown-toggle d-flex align-items-center gap-2 border py-1 px-2 rounded-pill shadow-none" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                {% if current_user.profile_pic and current_user.profile_pic != 'default-avatar.svg' %}
+                  <img src="{{ url_for('static', filename='uploads/' + current_user.profile_pic) }}" alt="{{ current_user.username }}" class="user-nav-avatar">
+                {% else %}
+                  <img src="{{ url_for('static', filename='images/default-avatar.svg') }}" alt="{{ current_user.username }}" class="user-nav-avatar">
+                {% endif %}
+                <span class="d-none d-sm-inline fw-semibold text-truncate" style="max-width: 110px;">{{ current_user.username }}</span>
+                {% if current_user.is_admin() %}
+                  <span class="badge bg-danger rounded-pill" style="font-size: 0.65rem;">Admin</span>
+                {% endif %}
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="userMenuDropdown" style="min-width: 220px; border-radius: 12px;">
+                <li class="px-3 py-2 border-bottom">
+                  <div class="fw-bold text-dark">{{ current_user.full_name or current_user.username }}</div>
+                  <div class="small text-muted text-truncate">{{ current_user.email }}</div>
+                </li>
+                <li>
+                  <a class="dropdown-item py-2" href="{{ url_for('dashboard') }}">
+                    <i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item py-2" href="{{ url_for('my_blogs') }}">
+                    <i class="bi bi-file-earmark-richtext me-2 text-primary"></i> My Blogs
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item py-2" href="{{ url_for('my_comments') }}">
+                    <i class="bi bi-chat-left-text me-2 text-primary"></i> My Comments
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item py-2" href="{{ url_for('profile') }}">
+                    <i class="bi bi-person me-2 text-primary"></i> Profile Settings
+                  </a>
+                </li>
+
+                {% if current_user.is_admin() %}
+                  <li><hr class="dropdown-divider"></li>
+                  <li><h6 class="dropdown-header text-uppercase small fw-bold text-danger">Administration</h6></li>
+                  <li>
+                    <a class="dropdown-item py-2 text-danger" href="{{ url_for('admin_dashboard') }}">
+                      <i class="bi bi-shield-lock me-2"></i> Admin Panel
+                    </a>
+                  </li>
+                {% endif %}
+
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item py-2 text-danger" href="{{ url_for('logout') }}">
+                    <i class="bi bi-box-arrow-right me-2"></i> Sign Out
+                  </a>
+                </li>
+              </ul>
+            </div>
+          {% else %}
+            <!-- Unauthenticated Guests -->
+            <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-pill btn-sm px-3 py-2 fw-semibold">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+            </a>
+            <a href="{{ url_for('register') }}" class="btn btn-primary btn-pill btn-sm px-3 py-2 fw-semibold">
+              Get Started
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages Notifications -->
+  <div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% set alert_type = 'info' %}
+          {% if category == 'success' %}{% set alert_type = 'success' %}
+          {% elif category in ['error', 'danger'] %}{% set alert_type = 'danger' %}
+          {% elif category == 'warning' %}{% set alert_type = 'warning' %}
+          {% endif %}
+          <div class="alert alert-{{ alert_type }} alert-dismissible fade show shadow-sm border-0 alert-dismiss-auto d-flex align-items-center gap-2" role="alert">
+            {% if alert_type == 'success' %}
+              <i class="bi bi-check-circle-fill fs-5"></i>
+            {% elif alert_type == 'danger' %}
+              <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+            {% elif alert_type == 'warning' %}
+              <i class="bi bi-exclamation-circle-fill fs-5"></i>
+            {% else %}
+              <i class="bi bi-info-circle-fill fs-5"></i>
+            {% endif %}
+            <div class="flex-grow-1">{{ message }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- Main Body Content -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer-custom">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Brand Info -->
+        <div class="col-lg-4 col-md-6">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="navbar-brand-badge">
+              <i class="bi bi-journal-richtext"></i>
+            </span>
+            <span class="brand-text text-white" style="-webkit-text-fill-color: #ffffff;">BlogSphere</span>
+          </div>
+          <p class="small text-muted mb-3" style="line-height: 1.7;">
+            BlogSphere is a premier full-stack publishing platform designed for writers, engineers, thinkers, and storytellers. Share your ideas, spark conversations, and build your digital audience.
+          </p>
+          <div class="d-flex gap-2">
+            <a href="https://twitter.com" target="_blank" rel="noopener" class="social-icon-btn" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+            <a href="https://github.com" target="_blank" rel="noopener" class="social-icon-btn" aria-label="GitHub"><i class="bi bi-github"></i></a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener" class="social-icon-btn" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            <a href="https://youtube.com" target="_blank" rel="noopener" class="social-icon-btn" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          </div>
+        </div>
+
+        <!-- Quick Navigation -->
+        <div class="col-lg-2 col-md-6 col-6">
+          <h6 class="text-white fw-bold mb-3">Explore</h6>
+          <ul class="list-unstyled small mb-0 d-flex flex-column gap-2">
+            <li><a href="{{ url_for('index') }}" class="text-decoration-none">Home</a></li>
+            <li><a href="{{ url_for('blogs') }}" class="text-decoration-none">All Blogs</a></li>
+            <li><a href="{{ url_for('blogs', sort='popular') }}" class="text-decoration-none">Popular Posts</a></li>
+            <li><a href="{{ url_for('about') }}" class="text-decoration-none">About Us</a></li>
+            <li><a href="{{ url_for('contact') }}" class="text-decoration-none">Contact Support</a></li>
+          </ul>
+        </div>
+
+        <!-- Categories -->
+        <div class="col-lg-3 col-md-6 col-6">
+          <h6 class="text-white fw-bold mb-3">Categories</h6>
+          <ul class="list-unstyled small mb-0 d-flex flex-column gap-2">
+            {% if global_categories %}
+              {% for cat in global_categories[:5] %}
+                <li>
+                  <a href="{{ url_for('blogs', category=cat.slug) }}" class="text-decoration-none">
+                    {{ cat.name }} ({{ cat.posts.count() }})
+                  </a>
+                </li>
+              {% endfor %}
+            {% else %}
+              <li><span class="text-muted">Technology</span></li>
+              <li><span class="text-muted">Web Development</span></li>
+              <li><span class="text-muted">Artificial Intelligence</span></li>
+            {% endif %}
+          </ul>
+        </div>
+
+        <!-- College Assignment / Tech Stack Details -->
+        <div class="col-lg-3 col-md-6">
+          <h6 class="text-white fw-bold mb-3">Project Information</h6>
+          <p class="small text-muted mb-2">
+            <strong>Project:</strong> Blog Platform with Comments<br>
+            <strong>Stack:</strong> Python Flask, SQLAlchemy, SQLite, Bootstrap 5, Flask-Login.
+          </p>
+          <div class="p-3 rounded" style="background-color: #1e293b; border: 1px solid #334155;">
+            <div class="small fw-semibold text-light mb-1"><i class="bi bi-shield-check text-success me-1"></i> Assignment Ready</div>
+            <div class="small text-muted">Complete CRUD, Auth, Roles, Comments, Likes, and REST API.</div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="my-4" style="border-color: #334155;">
+
+      <!-- Bottom Bar -->
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-center small text-muted">
+        <div>
+          &copy; {{ current_year }} BlogSphere. Built with Python & Flask. All rights reserved.
+        </div>
+        <div class="d-flex gap-3 mt-2 mt-md-0">
+          <a href="{{ url_for('about') }}" class="text-muted text-decoration-none">About</a>
+          <a href="{{ url_for('contact') }}" class="text-muted text-decoration-none">Help & Support</a>
+          <a href="{{ url_for('blogs') }}" class="text-muted text-decoration-none">Feed</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Universal Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header border-bottom-0 pb-0">
+          <h5 class="modal-title fw-bold text-danger d-flex align-items-center gap-2" id="deleteModalTitle">
+            <i class="bi bi-exclamation-octagon"></i> Confirm Delete
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-3">
+          <p class="text-secondary mb-0" id="deleteModalBodyText">
+            Are you sure you want to permanently delete this item?
+          </p>
+        </div>
+        <div class="modal-footer border-top-0 pt-0">
+          <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+          <form id="deleteModalForm" method="POST" action="">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-danger rounded-pill px-4">
+              <i class="bi bi-trash3 me-1"></i> Yes, Delete
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Universal Comment Edit Modal -->
+  <div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <form id="editCommentForm" method="POST" action="">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="modal-header border-bottom-0 pb-0">
+            <h5 class="modal-title fw-bold" id="editCommentModalLabel">
+              <i class="bi bi-pencil me-1 text-primary"></i> Edit Comment
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body py-3">
+            <div class="mb-3">
+              <label for="editCommentTextarea" class="form-label">Your updated comment:</label>
+              <textarea class="form-control" id="editCommentTextarea" name="content" rows="4" required minlength="2" maxlength="1000"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer border-top-0 pt-0">
+            <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary rounded-pill px-4">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 Bundle with Popper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom JavaScript -->
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - BlogSphere{% endblock %}
+
+{% block content %}
+<!-- About Hero -->
+<section class="py-5 bg-white border-bottom">
+  <div class="container text-center py-4">
+    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 mb-3 fw-bold">
+      Our Mission & Story
+    </span>
+    <h1 class="display-5 fw-bold text-dark mb-3">
+      Empowering Every Voice to Inform, Inspire, and Connect
+    </h1>
+    <p class="lead text-muted mx-auto" style="max-width: 720px;">
+      BlogSphere is a modern full-stack publishing platform engineered to bridge passionate thinkers and eager learners through clean design, expressive writing, and interactive discussions.
+    </p>
+  </div>
+</section>
+
+<!-- Story & Core Values -->
+<section class="py-5">
+  <div class="container">
+    <div class="row g-5 align-items-center mb-5">
+      <div class="col-lg-6">
+        <h2 class="h3 fw-bold mb-3">Crafted for Writers and Readers Alike</h2>
+        <p class="text-secondary" style="line-height: 1.8;">
+          Founded as an advanced full-stack web engineering assignment titled <strong>Blog Platform with Comments</strong>, BlogSphere goes far beyond basic classroom requirements. It embraces the principles of production software architecture: defensive security, clean modular abstractions, relational integrity, and high-quality user experiences.
+        </p>
+        <p class="text-secondary" style="line-height: 1.8;">
+          Whether you are a developer penning technical deep-dives, a designer showcasing case studies, or a student sharing collegiate insights, BlogSphere provides the ideal canvas to format your thoughts and receive genuine community feedback.
+        </p>
+        <div class="d-flex gap-3 mt-4">
+          <a href="{{ url_for('blogs') }}" class="btn btn-primary btn-pill px-4">
+            <i class="bi bi-compass me-1"></i> Read Articles
+          </a>
+          <a href="{{ url_for('register') }}" class="btn btn-outline-secondary btn-pill px-4">
+            <i class="bi bi-person-plus me-1"></i> Join Today
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="p-4 p-md-5 rounded-4 bg-white border shadow-sm">
+          <h4 class="fw-bold mb-3 text-dark"><i class="bi bi-check-circle-fill text-success me-2"></i> Core Architecture Highlights</h4>
+          <ul class="list-unstyled mb-0 d-flex flex-column gap-3 text-secondary">
+            <li class="d-flex align-items-start gap-2">
+              <i class="bi bi-cpu-fill text-primary mt-1"></i>
+              <div><strong>Python Flask Backend:</strong> Lightweight, performant WSGI server utilizing clean blueprints, routes, and RESTful APIs.</div>
+            </li>
+            <li class="d-flex align-items-start gap-2">
+              <i class="bi bi-database-fill-check text-primary mt-1"></i>
+              <div><strong>SQLite & SQLAlchemy ORM:</strong> Structured relational database models with foreign keys, cascading deletions, and constraints.</div>
+            </li>
+            <li class="d-flex align-items-start gap-2">
+              <i class="bi bi-shield-lock-fill text-primary mt-1"></i>
+              <div><strong>Enterprise Security:</strong> Scrypt password hashing, session management, CSRF protection, and role-based access control.</div>
+            </li>
+            <li class="d-flex align-items-start gap-2">
+              <i class="bi bi-layout-wtf text-primary mt-1"></i>
+              <div><strong>Bootstrap 5 & Clean CSS:</strong> Modern responsive light interface with responsive typography and subtle animations.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature Grid -->
+    <div class="row g-4 mt-2">
+      <div class="col-md-4">
+        <div class="card card-custom p-4 h-100">
+          <div class="stat-icon stat-icon-blue mb-3">
+            <i class="bi bi-pencil-square"></i>
+          </div>
+          <h5 class="fw-bold text-dark">Intuitive Article Editor</h5>
+          <p class="text-muted small mb-0">
+            Write and publish posts effortlessly with custom cover uploads, tag classification, category assignment, and auto read-time estimation.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card card-custom p-4 h-100">
+          <div class="stat-icon stat-icon-purple mb-3">
+            <i class="bi bi-chat-heart"></i>
+          </div>
+          <h5 class="fw-bold text-dark">Engaging Discussions</h5>
+          <p class="text-muted small mb-0">
+            Real-time likes, inline comment editing, discussion threads, and total engagement tracking to foster meaningful community feedback.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card card-custom p-4 h-100">
+          <div class="stat-icon stat-icon-green mb-3">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <h5 class="fw-bold text-dark">Role-Based Moderation</h5>
+          <p class="text-muted small mb-0">
+            Dedicated administrative dashboard for user management, role escalation, content moderation, and category lifecycle oversight.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - BlogSphere{% endblock %}
+
+{% block content %}
+<div class="dashboard-page py-5">
+  <div class="container">
+    
+    <div class="dashboard-heading d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+      <div>
+        <div class="dashboard-eyebrow"><i class="bi bi-stars"></i> Your creator space</div>
+        <h1 class="dashboard-title h3 fw-bold text-dark mb-1">
+          Welcome back, {{ current_user.full_name or current_user.username }}!
+        </h1>
+        <p class="dashboard-subtitle small mb-0">Here is a quick snapshot of your blogging activity and engagement.</p>
+      </div>
+      <div class="dashboard-actions d-flex gap-2">
+        <a href="{{ url_for('create_blog') }}" class="btn btn-primary btn-pill dashboard-write-btn">
+          <i class="bi bi-pencil-square me-1"></i> Write New Post
+        </a>
+        <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary btn-pill dashboard-profile-btn">
+          <i class="bi bi-gear me-1"></i> Profile
+        </a>
+      </div>
+    </div>
+
+    
+    {% if current_user.is_admin() %}
+      <div class="alert alert-danger border-0 shadow-sm d-flex align-items-center justify-content-between mb-4 p-3 rounded-3">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-shield-lock-fill fs-4"></i>
+          <div>
+            <strong>Administrator Access Enabled</strong>
+            <div class="small">You have system administration privileges to moderate all posts, comments, categories, and users.</div>
+          </div>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-danger btn-sm rounded-pill px-3">
+          Open Admin Panel
+        </a>
+      </div>
+    {% endif %}
+
+    
+    <div class="row g-4 mb-5 dashboard-stats">
+      <!-- Total Posts -->
+      <div class="col-md-4">
+        <div class="stat-card dashboard-stat-card">
+          <div>
+            <div class="text-muted small fw-semibold text-uppercase">My Articles</div>
+            <div class="h2 fw-bold text-dark mb-0">{{ total_posts }}</div>
+            <a href="{{ url_for('my_blogs') }}" class="small text-primary text-decoration-none fw-semibold">
+              View all posts &rarr;
+            </a>
+          </div>
+          <div class="stat-icon stat-icon-blue">
+            <i class="bi bi-journal-text"></i>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="col-md-4">
+        <div class="stat-card dashboard-stat-card">
+          <div>
+            <div class="text-muted small fw-semibold text-uppercase">Likes Received</div>
+            <div class="h2 fw-bold text-dark mb-0">{{ total_likes_received }}</div>
+            <span class="small text-muted">Across all your posts</span>
+          </div>
+          <div class="stat-icon stat-icon-orange">
+            <i class="bi bi-heart-fill"></i>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="col-md-4">
+        <div class="stat-card dashboard-stat-card">
+          <div>
+            <div class="text-muted small fw-semibold text-uppercase">My Comments</div>
+            <div class="h2 fw-bold text-dark mb-0">{{ total_comments }}</div>
+            <a href="{{ url_for('my_comments') }}" class="small text-primary text-decoration-none fw-semibold">
+              View all comments &rarr;
+            </a>
+          </div>
+          <div class="stat-icon stat-icon-purple">
+            <i class="bi bi-chat-quote-fill"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Columns: Recent Posts & Recent Comments -->
+    <div class="row g-4">
+      <!-- Recent Posts -->
+      <div class="col-lg-8">
+        <div class="card card-custom p-4 dashboard-panel">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">My Recent Articles</h5>
+            <a href="{{ url_for('my_blogs') }}" class="small fw-semibold text-primary text-decoration-none">
+              View All ({{ total_posts }})
+            </a>
+          </div>
+
+          {% if recent_posts %}
+            <div class="table-responsive">
+              <table class="table align-middle table-hover mb-0 dashboard-table">
+                <thead class="table-light text-muted small">
+                  <tr>
+                    <th>Article</th>
+                    <th>Category</th>
+                    <th>Stats</th>
+                    <th>Date</th>
+                    <th class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for post in recent_posts %}
+                    <tr>
+                      <td style="max-width: 300px;">
+                        <div class="d-flex align-items-center gap-3">
+                          <div style="width: 62px; height: 46px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: #f3f4f6;">
+                            {% if post.featured_image %}
+                              <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                              <img src="{{ url_for('static', filename='images/default-blog.svg') }}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% endif %}
+                          </div>
+                          <a href="{{ url_for('blog_detail', slug=post.slug) }}" class="fw-semibold text-dark text-decoration-none text-truncate d-block">
+                            {{ post.title }}
+                          </a>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="badge badge-cat-{{ post.category.color or 'primary' }} py-1 px-2" style="font-size: 0.7rem;">
+                          {{ post.category.name }}
+                        </span>
+                      </td>
+                      <td class="small text-muted">
+                        <span class="me-2"><i class="bi bi-heart text-danger me-1"></i>{{ post.total_likes }}</span>
+                        <span><i class="bi bi-chat text-primary me-1"></i>{{ post.total_comments }}</span>
+                      </td>
+                      <td class="small text-muted">
+                        {{ post.created_at.strftime('%b %d, %Y') }}
+                      </td>
+                      <td class="text-end">
+                        <div class="d-inline-flex gap-1">
+                          <a href="{{ url_for('blog_detail', slug=post.slug) }}" class="btn btn-sm btn-light" title="View"><i class="bi bi-eye"></i></a>
+                          <a href="{{ url_for('edit_blog', post_id=post.id) }}" class="btn btn-sm btn-light text-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                          <button type="button" class="btn btn-sm btn-light text-danger" title="Delete"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteConfirmModal"
+                            data-item-type="Post"
+                            data-item-name="{{ post.title }}"
+                            data-action-url="{{ url_for('delete_blog', post_id=post.id) }}">
+                            <i class="bi bi-trash3"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="text-center py-4 text-muted">
+              <p class="small mb-3">You haven't written any articles yet.</p>
+              <a href="{{ url_for('create_blog') }}" class="btn btn-sm btn-primary rounded-pill px-3">
+                <i class="bi bi-pencil-square me-1"></i> Create Your First Post
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Recent Comments Sidebar -->
+      <div class="col-lg-4">
+        <div class="card card-custom p-4 dashboard-panel">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">My Recent Comments</h5>
+            <a href="{{ url_for('my_comments') }}" class="small fw-semibold text-primary text-decoration-none">
+              View All
+            </a>
+          </div>
+
+          {% if recent_comments %}
+            <div class="d-flex flex-column gap-3">
+              {% for comment in recent_comments %}
+                <div class="dashboard-comment p-3 bg-light rounded-3 border-start border-4 border-primary">
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <div style="width: 42px; height: 42px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: #eef2ff; border: 1px solid rgba(13,110,253,0.12);">
+                      {% if comment.post.featured_image %}
+                        <img src="{{ url_for('static', filename='uploads/' + comment.post.featured_image) }}" alt="{{ comment.post.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                      {% else %}
+                        <img src="{{ url_for('static', filename='images/default-blog.svg') }}" alt="{{ comment.post.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                      {% endif %}
+                    </div>
+                    <div class="small fw-semibold mb-0">
+                      On <a href="{{ url_for('blog_detail', slug=comment.post.slug) }}" class="text-dark">{{ comment.post.title | truncate(35) }}</a>
+                    </div>
+                  </div>
+                  <p class="small text-muted mb-2 fst-italic">"{{ comment.content | truncate(80) }}"</p>
+                  <div class="d-flex justify-content-between align-items-center text-muted" style="font-size: 0.75rem;">
+                    <span>{{ comment.created_at.strftime('%b %d, %Y') }}</span>
+                    <button type="button" class="btn btn-sm btn-link text-danger p-0 text-decoration-none"
+                      data-bs-toggle="modal"
+                      data-bs-target="#deleteConfirmModal"
+                      data-item-type="Comment"
+                      data-item-name="{{ comment.content | truncate(30) }}"
+                      data-action-url="{{ url_for('delete_comment', comment_id=comment.id) }}">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-center py-4 text-muted small">
+              You haven't posted any comments yet. Explore blogs to join the discussions!
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

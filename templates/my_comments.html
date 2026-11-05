@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}My Comments - BlogSphere{% endblock %}
+
+{% block content %}
+<div class="py-5">
+  <div class="container">
+    <!-- Header -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+      <div>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-1 small">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">My Comments</li>
+          </ol>
+        </nav>
+        <h1 class="h3 fw-bold text-dark mb-0">My Comments</h1>
+      </div>
+      <a href="{{ url_for('blogs') }}" class="btn btn-outline-primary btn-pill btn-sm px-3">
+        <i class="bi bi-compass me-1"></i> Browse Blogs
+      </a>
+    </div>
+
+    <!-- Comments List -->
+    <div class="card card-custom p-4">
+      {% if comments.items %}
+        <div class="d-flex flex-column gap-3">
+          {% for comment in comments.items %}
+            <div class="p-3 bg-light rounded-3 border">
+              <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+                <div>
+                  <span class="small text-muted">Commented on:</span>
+                  <a href="{{ url_for('blog_detail', slug=comment.post.slug) }}" class="fw-bold text-dark text-decoration-none">
+                    {{ comment.post.title }}
+                  </a>
+                  <span class="badge badge-cat-{{ comment.post.category.color or 'primary' }} ms-1 py-1 px-2" style="font-size: 0.68rem;">
+                    {{ comment.post.category.name }}
+                  </span>
+                </div>
+                <div class="small text-muted">
+                  {{ comment.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                  {% if comment.updated_at and comment.updated_at > comment.created_at %}
+                    <span class="fst-italic">(edited)</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Comment Body Content -->
+              <p class="text-secondary small mb-3" style="line-height: 1.6;">
+                {{ comment.content }}
+              </p>
+
+              <!-- Actions -->
+              <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                <a href="{{ url_for('blog_detail', slug=comment.post.slug) }}#comment-{{ comment.id }}" class="small text-primary text-decoration-none">
+                  <i class="bi bi-box-arrow-up-right me-1"></i> View in Discussion
+                </a>
+                <div class="d-flex gap-2">
+                  <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editCommentModal"
+                    data-comment-id="{{ comment.id }}"
+                    data-comment-content="{{ comment.content }}"
+                    data-update-url="{{ url_for('edit_comment', comment_id=comment.id) }}">
+                    <i class="bi bi-pencil me-1"></i> Edit
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteConfirmModal"
+                    data-item-type="Comment"
+                    data-item-name="{{ comment.content | truncate(35) }}"
+                    data-action-url="{{ url_for('delete_comment', comment_id=comment.id) }}">
+                    <i class="bi bi-trash3 me-1"></i> Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if comments.pages > 1 %}
+          <nav aria-label="Comment pagination" class="mt-4">
+            <ul class="pagination justify-content-center mb-0">
+              <li class="page-item {% if not comments.has_prev %}disabled{% endif %}">
+                <a class="page-link rounded-pill px-3 me-2" href="{{ url_for('my_comments', page=comments.prev_num) }}">Previous</a>
+              </li>
+              {% for p in comments.iter_pages() %}
+                {% if p %}
+                  <li class="page-item {% if p == comments.page %}active{% endif %}">
+                    <a class="page-link rounded-circle mx-1 text-center" style="width: 36px; height: 36px; line-height: 20px;" href="{{ url_for('my_comments', page=p) }}">{{ p }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+              <li class="page-item {% if not comments.has_next %}disabled{% endif %}">
+                <a class="page-link rounded-pill px-3 ms-2" href="{{ url_for('my_comments', page=comments.next_num) }}">Next</a>
+              </li>
+            </ul>
+          </nav>
+        {% endif %}
+
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="bi bi-chat-left-dots"></i>
+          </div>
+          <h4 class="fw-bold">No comments posted yet</h4>
+          <p class="text-muted small mb-4">You haven't participated in any discussions yet. Explore articles and share your thoughts!</p>
+          <a href="{{ url_for('blogs') }}" class="btn btn-primary btn-pill px-4">
+            Explore Articles
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

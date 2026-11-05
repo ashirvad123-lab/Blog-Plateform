@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In - BlogSphere{% endblock %}
+
+{% block content %}
+<div class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-7 col-lg-5">
+        <div class="auth-card">
+          <!-- Brand Badge -->
+          <div class="text-center mb-4">
+            <span class="navbar-brand-badge mb-2">
+              <i class="bi bi-journal-richtext"></i>
+            </span>
+            <h2 class="h4 fw-bold text-dark mt-2 mb-1">Welcome back</h2>
+            <p class="text-muted small">Sign in to your BlogSphere account</p>
+          </div>
+
+          <!-- Login Form -->
+          <form action="{{ url_for('login', next=request.args.get('next')) }}" method="POST" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+              <label for="{{ form.email_or_username.id }}" class="form-label">Email or Username</label>
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                {{ form.email_or_username(class="form-control border-start-0 ps-0", placeholder="Enter email or username", autofocus=true) }}
+              </div>
+              {% if form.email_or_username.errors %}
+                <div class="text-danger small mt-1">
+                  {% for error in form.email_or_username.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <label for="{{ form.password.id }}" class="form-label mb-0">Password</label>
+              </div>
+              <div class="input-group mt-1">
+                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                {{ form.password(class="form-control border-start-0 ps-0", placeholder="Enter your password") }}
+              </div>
+              {% if form.password.errors %}
+                <div class="text-danger small mt-1">
+                  {% for error in form.password.errors %}{{ error }}{% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-4 form-check">
+              {{ form.remember_me(class="form-check-input") }}
+              <label class="form-check-label small text-muted" for="{{ form.remember_me.id }}">
+                Remember me on this browser
+              </label>
+            </div>
+
+            <div class="d-grid mb-3">
+              <button type="submit" class="btn btn-primary btn-pill py-2 fw-semibold">
+                Sign In
+              </button>
+            </div>
+
+            <div class="text-center small text-muted">
+              Don't have an account yet?
+              <a href="{{ url_for('register') }}" class="fw-semibold text-primary text-decoration-none">
+                Create an account
+              </a>
+            </div>
+          </form>
+
+          <!-- Quick Test Credentials Hint for College Grading / Demo -->
+          <div class="mt-4 p-3 bg-light rounded-3 border small">
+            <div class="fw-bold text-dark mb-1"><i class="bi bi-info-circle text-primary me-1"></i> Demo Credentials:</div>
+            <div class="text-muted"><strong>Admin:</strong> admin@blogsphere.com / Admin@123</div>
+            <div class="text-muted"><strong>User:</strong> alex_dev / Alex@123</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

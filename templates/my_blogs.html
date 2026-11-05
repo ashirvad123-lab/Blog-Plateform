@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}My Articles - BlogSphere{% endblock %}
+
+{% block content %}
+<div class="py-5">
+  <div class="container">
+    <!-- Header -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+      <div>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-1 small">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">My Blogs</li>
+          </ol>
+        </nav>
+        <h1 class="h3 fw-bold text-dark mb-0">My Published Articles</h1>
+      </div>
+      <a href="{{ url_for('create_blog') }}" class="btn btn-primary btn-pill">
+        <i class="bi bi-pencil-square me-1"></i> New Article
+      </a>
+    </div>
+
+    <!-- Posts Table Card -->
+    <div class="card card-custom p-4">
+      {% if posts.items %}
+        <div class="table-responsive">
+          <table class="table align-middle table-hover mb-0">
+            <thead class="table-light text-muted small">
+              <tr>
+                <th style="min-width: 250px;">Article Title</th>
+                <th>Category</th>
+                <th>Views</th>
+                <th>Likes</th>
+                <th>Comments</th>
+                <th>Date</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for post in posts.items %}
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center gap-3">
+                      <div style="width: 50px; height: 35px; border-radius: 6px; overflow: hidden; flex-shrink: 0;">
+                        {% if post.featured_image %}
+                          <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                          <img src="{{ url_for('static', filename='images/default-blog.svg') }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% endif %}
+                      </div>
+                      <div>
+                        <a href="{{ url_for('blog_detail', slug=post.slug) }}" class="fw-bold text-dark text-decoration-none">
+                          {{ post.title }}
+                        </a>
+                        {% if post.is_featured %}
+                          <span class="badge bg-warning text-dark ms-1" style="font-size: 0.65rem;">Featured</span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge badge-cat-{{ post.category.color or 'primary' }} py-1 px-2" style="font-size: 0.75rem;">
+                      {{ post.category.name }}
+                    </span>
+                  </td>
+                  <td class="small fw-semibold text-muted">{{ post.views }}</td>
+                  <td class="small fw-semibold text-danger"><i class="bi bi-heart-fill me-1"></i>{{ post.total_likes }}</td>
+                  <td class="small fw-semibold text-primary"><i class="bi bi-chat-fill me-1"></i>{{ post.total_comments }}</td>
+                  <td class="small text-muted">{{ post.created_at.strftime('%b %d, %Y') }}</td>
+                  <td class="text-end">
+                    <div class="d-inline-flex gap-2">
+                      <a href="{{ url_for('blog_detail', slug=post.slug) }}" class="btn btn-sm btn-light" title="View"><i class="bi bi-eye"></i></a>
+                      <a href="{{ url_for('edit_blog', post_id=post.id) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                      <button type="button" class="btn btn-sm btn-outline-danger" title="Delete"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteConfirmModal"
+                        data-item-type="Post"
+                        data-item-name="{{ post.title }}"
+                        data-action-url="{{ url_for('delete_blog', post_id=post.id) }}">
+                        <i class="bi bi-trash3"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if posts.pages > 1 %}
+          <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center mb-0">
+              <li class="page-item {% if not posts.has_prev %}disabled{% endif %}">
+                <a class="page-link rounded-pill px-3 me-2" href="{{ url_for('my_blogs', page=posts.prev_num) }}">Previous</a>
+              </li>
+              {% for p in posts.iter_pages() %}
+                {% if p %}
+                  <li class="page-item {% if p == posts.page %}active{% endif %}">
+                    <a class="page-link rounded-circle mx-1 text-center" style="width: 36px; height: 36px; line-height: 20px;" href="{{ url_for('my_blogs', page=p) }}">{{ p }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+              <li class="page-item {% if not posts.has_next %}disabled{% endif %}">
+                <a class="page-link rounded-pill px-3 ms-2" href="{{ url_for('my_blogs', page=posts.next_num) }}">Next</a>
+              </li>
+            </ul>
+          </nav>
+        {% endif %}
+
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="bi bi-journal-plus"></i>
+          </div>
+          <h4 class="fw-bold">You haven't written any articles yet</h4>
+          <p class="text-muted small mb-4">Start sharing your thoughts, guides, and stories with the world.</p>
+          <a href="{{ url_for('create_blog') }}" class="btn btn-primary btn-pill px-4">
+            <i class="bi bi-pencil-square me-1"></i> Write Your First Article
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

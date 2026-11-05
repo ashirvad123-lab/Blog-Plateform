@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Support - BlogSphere{% endblock %}
+
+{% block content %}
+<div class="py-5 bg-white border-bottom">
+  <div class="container text-center py-4">
+    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2 mb-3 fw-bold">
+      Get in Touch
+    </span>
+    <h1 class="display-5 fw-bold text-dark mb-2">We'd Love to Hear From You</h1>
+    <p class="lead text-muted mx-auto" style="max-width: 600px;">
+      Have a question, feedback, feature suggestion, or need help? Send us a message and our team will get back to you promptly.
+    </p>
+  </div>
+</div>
+
+<div class="py-5">
+  <div class="container">
+    <div class="row g-5">
+      <!-- Contact Form -->
+      <div class="col-lg-7">
+        <div class="card card-custom p-4 p-md-5">
+          <h3 class="h4 fw-bold mb-4 text-dark">Send us a Message</h3>
+
+          <form action="{{ url_for('contact') }}" method="POST" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="{{ form.name.id }}" class="form-label">Your Name <span class="text-danger">*</span></label>
+                {{ form.name(class="form-control", placeholder="John Doe") }}
+                {% if form.name.errors %}
+                  <div class="text-danger small mt-1">{% for error in form.name.errors %}{{ error }}{% endfor %}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.email.id }}" class="form-label">Email Address <span class="text-danger">*</span></label>
+                {{ form.email(class="form-control", placeholder="john@example.com") }}
+                {% if form.email.errors %}
+                  <div class="text-danger small mt-1">{% for error in form.email.errors %}{{ error }}{% endfor %}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-12">
+                <label for="{{ form.subject.id }}" class="form-label">Subject <span class="text-danger">*</span></label>
+                {{ form.subject(class="form-control", placeholder="How can we assist you?") }}
+                {% if form.subject.errors %}
+                  <div class="text-danger small mt-1">{% for error in form.subject.errors %}{{ error }}{% endfor %}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-12">
+                <label for="{{ form.message.id }}" class="form-label">Message <span class="text-danger">*</span></label>
+                {{ form.message(class="form-control", rows="5", placeholder="Type your inquiry or message here...") }}
+                {% if form.message.errors %}
+                  <div class="text-danger small mt-1">{% for error in form.message.errors %}{{ error }}{% endfor %}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-12 pt-2">
+                <button type="submit" class="btn btn-primary btn-pill px-5 py-2">
+                  <i class="bi bi-send me-1"></i> Send Message
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Contact Info & FAQ -->
+      <div class="col-lg-5">
+        <!-- Direct Contact Cards -->
+        <div class="d-flex flex-column gap-3 mb-4">
+          <div class="card card-custom p-3 d-flex flex-row align-items-center gap-3">
+            <div class="stat-icon stat-icon-blue">
+              <i class="bi bi-envelope-at"></i>
+            </div>
+            <div>
+              <div class="small text-muted fw-semibold">Email Support</div>
+              <div class="fw-bold text-dark">support@blogsphere.com</div>
+            </div>
+          </div>
+
+          <div class="card card-custom p-3 d-flex flex-row align-items-center gap-3">
+            <div class="stat-icon stat-icon-purple">
+              <i class="bi bi-geo-alt"></i>
+            </div>
+            <div>
+              <div class="small text-muted fw-semibold">Campus & Location</div>
+              <div class="fw-bold text-dark">Department of Computer Science</div>
+            </div>
+          </div>
+
+          <div class="card card-custom p-3 d-flex flex-row align-items-center gap-3">
+            <div class="stat-icon stat-icon-green">
+              <i class="bi bi-clock-history"></i>
+            </div>
+            <div>
+              <div class="small text-muted fw-semibold">Response Time</div>
+              <div class="fw-bold text-dark">Within 24 business hours</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini FAQ Accordion -->
+        <h5 class="fw-bold text-dark mb-3">Frequently Asked Questions</h5>
+        <div class="accordion" id="faqAccordion">
+          <div class="accordion-item border rounded-3 mb-2 overflow-hidden">
+            <h2 class="accordion-header" id="headingOne">
+              <button class="accordion-button collapsed fw-semibold text-dark shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                Can I edit my published posts?
+              </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+              <div class="accordion-body small text-muted">
+                Yes! As an author, you can edit your article anytime through your Dashboard or directly on the article page.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item border rounded-3 mb-2 overflow-hidden">
+            <h2 class="accordion-header" id="headingTwo">
+              <button class="accordion-button collapsed fw-semibold text-dark shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                How do comments and moderation work?
+              </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+              <div class="accordion-body small text-muted">
+                Any registered member can comment. You can edit and delete your own comments, while platform administrators can moderate all content to maintain community guidelines.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item border rounded-3 overflow-hidden">
+            <h2 class="accordion-header" id="headingThree">
+              <button class="accordion-button collapsed fw-semibold text-dark shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                Are there REST APIs available?
+              </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+              <div class="accordion-body small text-muted">
+                Yes, BlogSphere includes full RESTful endpoints (JSON) for posts, comments, likes, and categories.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

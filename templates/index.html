@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block title %}BlogSphere - Share Your Ideas. Inspire the World.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center">
+  <div class="container position-relative">
+    <div class="hero-pill">
+      <i class="bi bi-stars text-warning"></i> Empowering Modern Thinkers & Writers
+    </div>
+    <h1 class="hero-title mb-3">
+      Share Your Ideas.<br>
+      <span class="hero-highlight">Inspire the World.</span>
+    </h1>
+    <p class="hero-lead">
+      Discover stories, thinking, and expertise from writers on any topic. Join our thriving community of creators, developers, designers, and readers today.
+    </p>
+
+    <!-- Search Form -->
+    <div class="hero-search-wrapper mb-4">
+      <form action="{{ url_for('blogs') }}" method="GET" class="position-relative">
+        <i class="bi bi-search hero-search-icon"></i>
+        <input type="text" name="q" class="form-control hero-search-input" placeholder="Search by topic, keyword, or title..." aria-label="Search blogs" required>
+        <button type="submit" class="btn btn-primary hero-search-btn">
+          Search
+        </button>
+      </form>
+    </div>
+
+    <!-- Quick Action Buttons -->
+    <div class="d-flex flex-wrap justify-content-center gap-3">
+      <a href="{{ url_for('blogs') }}" class="btn btn-primary btn-pill px-4 py-2">
+        <i class="bi bi-compass me-1"></i> Explore Blogs
+      </a>
+      {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('register') }}" class="btn btn-outline-primary btn-pill px-4 py-2">
+          <i class="bi bi-person-plus me-1"></i> Start Writing Free
+        </a>
+      {% else %}
+        <a href="{{ url_for('create_blog') }}" class="btn btn-outline-primary btn-pill px-4 py-2">
+          <i class="bi bi-pencil-square me-1"></i> Write a Story
+        </a>
+      {% endif %}
+    </div>
+
+    <!-- Category Quick Chips -->
+    {% if categories %}
+      <div class="mt-4 pt-2 d-flex flex-wrap justify-content-center gap-2">
+        <span class="small text-muted align-self-center me-1">Popular Topics:</span>
+        {% for cat in categories[:6] %}
+          <a href="{{ url_for('blogs', category=cat.slug) }}" class="badge rounded-pill text-decoration-none px-3 py-2 badge-cat-{{ cat.color or 'primary' }}">
+            #{{ cat.name }}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Featured Post Banner (If Available) -->
+{% if featured_posts %}
+  <section class="py-5 bg-white border-bottom">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <span class="badge badge-featured px-3 py-2 rounded-pill text-uppercase mb-2">
+            <i class="bi bi-lightning-charge-fill me-1"></i> Featured Stories
+          </span>
+          <h2 class="h3 fw-bold mb-0">Handpicked for You</h2>
+        </div>
+        <a href="{{ url_for('blogs') }}" class="text-decoration-none fw-semibold d-flex align-items-center gap-1">
+          View all <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="row g-4">
+        <!-- Main Featured Highlight Card -->
+        {% set hero_post = featured_posts[0] %}
+        <div class="col-lg-7">
+          <div class="card card-custom card-hover h-100 overflow-hidden">
+            <div class="row g-0 h-100">
+              <div class="col-md-6 blog-card-img-wrapper" style="min-height: 280px; padding-top: 0;">
+                {% if hero_post.featured_image %}
+                  <img src="{{ url_for('static', filename='uploads/' + hero_post.featured_image) }}" class="blog-card-img" alt="{{ hero_post.title }}">
+                {% else %}
+                  <img src="{{ url_for('static', filename='images/default-blog.svg') }}" class="blog-card-img" alt="{{ hero_post.title }}">
+                {% endif %}
+              </div>
+              <div class="col-md-6 d-flex flex-column p-4">
+                <div class="mb-2">
+                  <span class="badge badge-cat-{{ hero_post.category.color or 'primary' }} badge-category">
+                    {{ hero_post.category.name }}
+                  </span>
+                  <span class="text-muted small ms-2"><i class="bi bi-clock me-1"></i>{{ hero_post.read_time }} min read</span>
+                </div>
+                <h3 class="h4 fw-bold mb-2">
+                  <a href="{{ url_for('blog_detail', slug=hero_post.slug) }}" class="text-dark text-decoration-none">
+                    {{ hero_post.title }}
+                  </a>
+                </h3>
+                <p class="text-muted small mb-4 flex-grow-1">
+                  {{ hero_post.summary | truncate(140) }}
+                </p>
+                <div class="d-flex align-items-center justify-content-between pt-3 border-top mt-auto">
+                  <div class="d-flex align-items-center gap-2">
+                    {% if hero_post.author.profile_pic and hero_post.author.profile_pic != 'default-avatar.svg' %}
+                      <img src="{{ url_for('static', filename='uploads/' + hero_post.author.profile_pic) }}" alt="{{ hero_post.author.username }}" class="author-chip-avatar">
+                    {% else %}
+                      <img src="{{ url_for('static', filename='images/default-avatar.svg') }}" alt="{{ hero_post.author.username }}" class="author-chip-avatar">
+                    {% endif %}
+                    <div>
+                      <div class="small fw-semibold text-dark">{{ hero_post.author.full_name or hero_post.author.username }}</div>
+                      <div class="text-muted" style="font-size: 0.75rem;">{{ hero_post.created_at.strftime('%b %d, %Y') }}</div>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center gap-3 small text-muted">
+                    <span><i class="bi bi-heart me-1 text-danger"></i>{{ hero_post.total_likes }}</span>
+                    <span><i class="bi bi-chat me-1 text-primary"></i>{{ hero_post.total_comments }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Secondary Featured List -->
+        <div class="col-lg-5 d-flex flex-column gap-3">
+          {% for post in featured_posts[1:4] %}
+            <div class="card card-custom card-hover p-3">
+              <div class="d-flex gap-3 align-items-center">
+                <div style="width: 110px; height: 85px; flex-shrink: 0; border-radius: 8px; overflow: hidden; position: relative;">
+                  {% if post.featured_image %}
+                    <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                  {% else %}
+                    <img src="{{ url_for('static', filename='images/default-blog.svg') }}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                  {% endif %}
+                </div>
+                <div class="flex-grow-1 overflow-hidden">
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="badge badge-cat-{{ post.category.color or 'primary' }} py-1 px-2" style="font-size: 0.7rem;">
+                      {{ post.category.name }}
+                    </span>
+                    <span class="text-muted" style="font-size: 0.75rem;">{{ post.read_time }} min read</span>
+                  </div>
+                  <h6 class="fw-bold mb-1 text-truncate">
+                    <a href="{{ url_for('blog_detail', slug=post.slug) }}" class="text-dark text-decoration-none">
+                      {{ post.title }}
+                    </a>
+                  </h6>
+                  <div class="small text-muted d-flex align-items-center gap-3" style="font-size: 0.78rem;">
+                    <span>{{ post.created_at.strftime('%b %d') }}</span>
+                    <span><i class="bi bi-heart text-danger me-1"></i>{{ post.total_likes }}</span>
+                    <span><i class="bi bi-chat text-primary me-1"></i>{{ post.total_comments }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+<!-- Main Section: Latest Posts & Popular Sidebar -->
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      <!-- Left Column: Latest Blog Posts -->
+      <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="h3 fw-bold mb-1">Latest Articles</h2>
+            <p class="text-muted small mb-0">Fresh perspectives and insights freshly published</p>
+          </div>
+          <a href="{{ url_for('blogs') }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+            Explore All
+          </a>
+        </div>
+
+        {% if latest_posts %}
+          <div class="row g-4">
+            {% for post in latest_posts %}
+              <div class="col-md-6">
+                <div class="card card-custom card-hover h-100 d-flex flex-column">
+                  <!-- Post Image -->
+                  <div class="blog-card-img-wrapper">
+                    {% if post.featured_image %}
+                      <img src="{{ url_for('static', filename='uploads/' + post.featured_image) }}" class="blog-card-img" alt="{{ post.title }}">
+                    {% else %}
+                      <img src="{{ url_for('static', filename='images/default-blog.svg') }}" class="blog-card-img" alt="{{ post.title }}">
+                    {% endif %}
+                    <span class="badge badge-cat-{{ post.category.color or 'primary' }} badge-category position-absolute top-0 start-0 m-3 shadow-sm">
+                      {{ post.category.name }}
+                    </span>
+                  </div>
+
+                  <!-- Post Body -->
+                  <div class="p-4 d-flex flex-column flex-grow-1">
+                    <div class="d-flex align-items-center gap-2 mb-2 text-muted small">
+                      <span><i class="bi bi-calendar3 me-1"></i>{{ post.created_at.strftime('%b %d, %Y') }}</span>
+                      <span>&bull;</span>
+                      <span><i class="bi bi-clock me-1"></i>{{ post.read_time }} min read</span>
+                    </div>
+
+                    <h5 class="card-title fw-bold mb-2">
+                      <a href="{{ url_for('blog_detail', slug=post.slug) }}" class="text-dark text-decoration-none">
+                        {{ post.title }}
+                      </a>
+                    </h5>
+
+                    <p class="card-text text-muted small mb-4 flex-grow-1">
+                      {{ post.summary | truncate(110) }}
+                    </p>
+
+                    <!-- Author & Social Stats -->
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top mt-auto">
+                      <div class="d-flex align-items-center gap-2">
+                        {% if post.author.profile_pic and post.author.profile_pic != 'default-avatar.svg' %}
+                          <img src="{{ url_for('static', filename='uploads/' + post.author.profile_pic) }}" alt="{{ post.author.username }}" class="author-chip-avatar">
+                        {% else %}
+                          <img src="{{ url_for('static', filename='images/default-avatar.svg') }}" alt="{{ post.author.username }}" class="author-chip-avatar">
+                        {% endif %}
+                        <span class="small fw-semibold text-dark">{{ post.author.full_name or post.author.username }}</span>
+                      </div>
+                      <div class="d-flex align-items-center gap-3 small text-muted">
+                        <span><i class="bi bi-heart me-1 text-danger"></i>{{ post.total_likes }}</span>
+                        <span><i class="bi bi-chat me-1 text-primary"></i>{{ post.total_comments }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="card card-custom empty-state">
+            <div class="empty-state-icon">
+              <i class="bi bi-pencil-square"></i>
+            </div>
+            <h4 class="fw-bold">No articles yet</h4>
+            <p class="text-muted small mb-4">Be the first to share an inspiring story on BlogSphere!</p>
+            <div>
+              <a href="{{ url_for('create_blog') }}" class="btn btn-primary btn-pill px-4">
+                Write the First Post
+              </a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Right Column: Sidebar (Categories, Popular Posts, About Widget) -->
+      <div class="col-lg-4">
+        <!-- Explore Categories Widget -->
+        <div class="card card-custom p-4 mb-4">
+          <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-tags-fill text-primary"></i> Categories
+          </h5>
+          <div class="d-flex flex-column gap-2">
+            {% for cat in categories %}
+              <a href="{{ url_for('blogs', category=cat.slug) }}" class="d-flex justify-content-between align-items-center text-decoration-none p-2 rounded hover-bg-light">
+                <span class="d-flex align-items-center gap-2 text-dark fw-medium">
+                  <span class="badge badge-cat-{{ cat.color or 'primary' }} rounded-circle p-1"></span>
+                  {{ cat.name }}
+                </span>
+                <span class="badge bg-light text-secondary rounded-pill">{{ cat.posts.count() }}</span>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Popular / Trending Posts Widget -->
+        <div class="card card-custom p-4 mb-4">
+          <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-fire text-danger"></i> Trending on BlogSphere
+          </h5>
+          {% if popular_posts %}
+            <div class="d-flex flex-column gap-3">
+              {% for post in popular_posts %}
+                <div class="d-flex align-items-start gap-3">
+                  <span class="fs-4 fw-bold text-muted" style="min-width: 24px; opacity: 0.5;">0{{ loop.index }}</span>
+                  <div>
+                    <span class="badge badge-cat-{{ post.category.color or 'primary' }} py-1 px-2 mb-1" style="font-size: 0.68rem;">
+                      {{ post.category.name }}
+                    </span>
+                    <h6 class="fw-bold mb-1">
+                      <a href="{{ url_for('blog_detail', slug=post.slug) }}" class="text-dark text-decoration-none">
+                        {{ post.title }}
+                      </a>
+                    </h6>
+                    <div class="small text-muted" style="font-size: 0.78rem;">
+                      {{ post.author.full_name or post.author.username }} &bull; {{ post.total_likes }} likes
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-muted small mb-0">No trending posts yet.</p>
+          {% endif %}
+        </div>
+
+        <!-- Creator Callout Card -->
+        <div class="card border-0 p-4 text-white rounded-4" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+          <div class="mb-3">
+            <i class="bi bi-lightbulb fs-1 text-warning"></i>
+          </div>
+          <h4 class="fw-bold mb-2">Have a story to tell?</h4>
+          <p class="small text-light opacity-90 mb-4">
+            Join thousands of writers sharing their knowledge in tech, design, AI, and lifestyle.
+          </p>
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('create_blog') }}" class="btn btn-light btn-pill fw-bold text-primary">
+              <i class="bi bi-pencil-square me-1"></i> Start Writing
+            </a>
+          {% else %}
+            <a href="{{ url_for('register') }}" class="btn btn-light btn-pill fw-bold text-primary">
+              <i class="bi bi-person-plus me-1"></i> Create Free Account
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

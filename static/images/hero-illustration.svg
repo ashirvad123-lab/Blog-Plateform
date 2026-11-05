@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420" width="100%" height="100%">
+  <defs>
+    <linearGradient id="heroGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="60%" stop-color="#7c3aed" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f8fafc" />
+    </linearGradient>
+    <filter id="heroShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#4338ca" flood-opacity="0.18" />
+    </filter>
+    <filter id="floatShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.12" />
+    </filter>
+  </defs>
+
+  <!-- Background Decorative Glows -->
+  <circle cx="300" cy="210" r="170" fill="url(#heroGrad1)" opacity="0.08" />
+  <circle cx="480" cy="110" r="70" fill="#38bdf8" opacity="0.15" />
+  <circle cx="120" cy="310" r="90" fill="#a855f7" opacity="0.12" />
+
+  <!-- Main Floating Editor Window -->
+  <g filter="url(#heroShadow)">
+    <rect x="100" y="55" width="400" height="290" rx="20" fill="url(#cardGrad)" stroke="#e2e8f0" stroke-width="2" />
+    
+    <!-- Window Header -->
+    <rect x="100" y="55" width="400" height="42" rx="20" fill="#f1f5f9" />
+    <path d="M100 77 h400 v20 h-400 z" fill="#f1f5f9" />
+    <line x1="100" y1="97" x2="500" y2="97" stroke="#e2e8f0" stroke-width="1.5" />
+    
+    <!-- Window Controls -->
+    <circle cx="126" cy="76" r="6" fill="#ef4444" />
+    <circle cx="144" cy="76" r="6" fill="#f59e0b" />
+    <circle cx="162" cy="76" r="6" fill="#10b981" />
+    
+    <!-- Search / Title mock -->
+    <rect x="195" y="68" width="170" height="16" rx="8" fill="#e2e8f0" />
+    <rect x="420" y="68" width="60" height="16" rx="8" fill="#4f46e5" opacity="0.85" />
+    <text x="450" y="80" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="700" fill="#ffffff">Publish</text>
+
+    <!-- Editor Body Content Mockups -->
+    <!-- Category Pill & Read Time -->
+    <rect x="130" y="120" width="75" height="18" rx="9" fill="#e0e7ff" />
+    <text x="167" y="132" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="600" fill="#4f46e5">Technology</text>
+    <rect x="215" y="122" width="65" height="14" rx="7" fill="#f1f5f9" />
+    <text x="247" y="132" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="8" fill="#64748b">4 min read</text>
+
+    <!-- Headline Mock -->
+    <rect x="130" y="152" width="280" height="18" rx="5" fill="#1e293b" />
+    <rect x="130" y="177" width="190" height="14" rx="4" fill="#334155" />
+
+    <!-- Article Paragraph Lines -->
+    <rect x="130" y="206" width="330" height="8" rx="4" fill="#94a3b8" opacity="0.6" />
+    <rect x="130" y="222" width="310" height="8" rx="4" fill="#94a3b8" opacity="0.6" />
+    <rect x="130" y="238" width="240" height="8" rx="4" fill="#94a3b8" opacity="0.6" />
+
+    <!-- Code Block in Editor -->
+    <rect x="130" y="260" width="330" height="55" rx="8" fill="#0f172a" />
+    <rect x="145" y="273" width="90" height="6" rx="3" fill="#38bdf8" />
+    <rect x="245" y="273" width="60" height="6" rx="3" fill="#a855f7" />
+    <rect x="145" y="287" width="140" height="6" rx="3" fill="#34d399" />
+    <rect x="145" y="300" width="80" height="6" rx="3" fill="#f43f5e" />
+  </g>
+
+  <!-- Floating Badge Left: Engagement & Likes -->
+  <g filter="url(#floatShadow)">
+    <rect x="50" y="160" width="130" height="62" rx="14" fill="#ffffff" stroke="#f1f5f9" stroke-width="1.5" />
+    <circle cx="80" cy="191" r="17" fill="#fee2e2" />
+    <path d="M75 186 C75 183, 78 181, 80 183 C82 181, 85 183, 85 186 C85 191, 80 195, 80 195 C80 195, 75 191, 75 186 Z" fill="#ef4444" />
+    <text x="105" y="187" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#0f172a">1.4k+</text>
+    <text x="105" y="201" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="9" fill="#64748b">Community Likes</text>
+  </g>
+
+  <!-- Floating Badge Right: Community Writers -->
+  <g filter="url(#floatShadow)">
+    <rect x="420" y="195" width="145" height="68" rx="14" fill="#ffffff" stroke="#f1f5f9" stroke-width="1.5" />
+    <circle cx="452" cy="229" r="17" fill="#dbeafe" />
+    <!-- Pen Icon -->
+    <path d="M447 235 l3 -12 l9 9 l-12 3 z M456 220 l3 3" stroke="#2563eb" stroke-width="2" fill="none" stroke-linecap="round" />
+    <text x="477" y="224" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#0f172a">Active Writers</text>
+    <text x="477" y="239" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="9" fill="#10b981">&#x25CF; 250+ Online</text>
+  </g>
+
+  <!-- Floating Badge Top Right: Sparkle / Ideas -->
+  <g filter="url(#floatShadow)">
+    <rect x="410" y="30" width="115" height="46" rx="23" fill="url(#heroGrad1)" />
+    <circle cx="433" cy="53" r="12" fill="rgba(255,255,255,0.25)" />
+    <path d="M433 46 l1.5 4.5 l4.5 1.5 l-4.5 1.5 l-1.5 4.5 l-1.5 -4.5 l-4.5 -1.5 l4.5 -1.5 z" fill="#ffffff" />
+    <text x="453" y="57" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#ffffff">Ideas &amp; Code</text>
+  </g>
+
+  <!-- Subtle connecting tech dots & lines -->
+  <circle cx="160" cy="40" r="3" fill="#6366f1" />
+  <circle cx="460" cy="370" r="4" fill="#ec4899" />
+  <circle cx="90" cy="90" r="2.5" fill="#38bdf8" />
+  <circle cx="530" cy="150" r="3" fill="#8b5cf6" />
+</svg>
