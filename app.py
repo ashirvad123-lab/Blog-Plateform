@@ -44,6 +44,10 @@ def create_app(config_name=None):
     login_manager.init_app(app)
     csrf.init_app(app)
 
+    # Create database tables
+    with app.app_context():
+        db.create_all()
+
     # Configure login manager
     login_manager.login_view = 'login'
     login_manager.login_message = 'Please sign in to access this page.'
